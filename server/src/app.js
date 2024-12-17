@@ -5,7 +5,7 @@ import cors from "cors";
 import { NotFoundError } from "./expressError.js";
 import morgan from "morgan";
 
-import db from "./db.js";
+import User from "./models/user.js";
 
 const app = express();
 
@@ -13,15 +13,21 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 
-/** Check that we can get users. */
-app.get("/", async (req, res, next) => {
+/** User model check 1: get all */
+app.get("/users", async (req, res, next) => {
   try {
-    const { rows } = await db.query(
-      `SELECT username, password
-      FROM users
-      ORDER BY username`,
-    );
-    return res.json({ users: rows });
+    const users = await User.getAll();
+    return res.json({ users });
+  } catch (err) {
+    return next (err);
+  }
+});
+
+/** User model check 2: get individual */
+app.get("/users/:username", async (req, res, next) => {
+  try {
+    const user = await User.get(req.params.username);
+    return res.json({ user });
   } catch (err) {
     return next (err);
   }
