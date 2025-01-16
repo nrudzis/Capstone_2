@@ -11,7 +11,18 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
+
+/** User model check 3: register */
+app.post("/register", async (req, res, next) => {
+  try {
+    const user = await User.register(req.body);
+    return res.status(201).json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 /** User model check 1: get all */
 app.get("/users", async (req, res, next) => {
@@ -32,6 +43,7 @@ app.get("/users/:username", async (req, res, next) => {
     return next (err);
   }
 });
+
 
 /** Handle 404 errors. */
 app.use((req, res, next) => {
