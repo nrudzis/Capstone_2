@@ -6,7 +6,8 @@ import {
 } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import SwapApi from '../../server/src/api.js'
+import SwapApi from './api.js'
+import Register from './Register.jsx'
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     loader: async () => await SwapApi.getUser("james.bond.007"),
     element: <App />,
   },
+  {
+    path: "/register",
+    element: <Register />
+  }
 ]);
 
 createRoot(document.getElementById('root')).render(
