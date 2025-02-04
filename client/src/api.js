@@ -41,7 +41,7 @@ class SwapApi {
   /** Get all the users. */
   static async getAllUsers() {
     const res = await this.request("users");
-    return res.users;
+    return res.data.users;
   }
 }
 

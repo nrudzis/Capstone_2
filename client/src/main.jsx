@@ -8,16 +8,22 @@ import './index.css'
 import App from './App.jsx'
 import SwapApi from './api.js'
 import Register from './Register.jsx'
+import User from './User.jsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: async () => await SwapApi.getUser("james.bond.007"),
+    loader: async () => await SwapApi.getAllUsers(),
     element: <App />,
   },
   {
     path: "/register",
     element: <Register />
+  },
+  {
+    path: "/users/:username",
+    loader: async ({ params }) => await SwapApi.getUser(params.username),
+    element: <User />
   }
 ]);
 

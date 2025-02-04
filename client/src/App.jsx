@@ -7,7 +7,7 @@ import { useLoaderData } from 'react-router-dom'
 function App() {
   const [count, setCount] = useState(0)
 
-  const user = useLoaderData();
+  const users = useLoaderData();
 
   return (
     <>
@@ -31,9 +31,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <p>Username: {user.username}</p>
-      <p>Password: {user.password}</p>
-      <p>Account Balance: ${user.accountBalance}</p>
+      <p>Users: ${JSON.stringify(users)}</p>
     </>
   )
 }
