@@ -1,4 +1,5 @@
 import { useLoaderData } from 'react-router-dom'
+import FundAccount from './FundAccount.jsx'
 
 function User() {
 
@@ -7,7 +8,8 @@ function User() {
   return (
     <>
       <h1>Username: {user.username}</h1>
-      <h2>Account Balance: ${user.accountBalance}</h2>
+      <h2>Account Balance: ${user.accountBalance ? user.accountBalance : "0.00"}</h2>
+      {!user.accountBalance && <FundAccount />}
     </>
   )
 }
