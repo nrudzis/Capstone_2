@@ -3,7 +3,7 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Sat, 01 Feb 2025 01:11:21 GMT*
+*Updated: Tue, 04 Feb 2025 23:32:58 GMT*
 
 ## Swap
 
@@ -18,7 +18,7 @@ This document outlines current and planned milestones for the Swap project.
 
 #### Fund account
 - Add ability for new users to fund their account with fake money
-    - Button that funds account if balance is 0, otherwise disappears
+    - Add logic to button that funds user account when balance is $0
 
 #### Send/receive funds
 - Add ability for users to send funds to other users
