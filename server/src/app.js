@@ -44,6 +44,21 @@ app.get("/users/:username", async (req, res, next) => {
   }
 });
 
+/** User model check 4: send funds */
+app.post("/users/:username/send-funds", async (req, res, next) => {
+  try {
+    const sendFundsDetails = {
+      usernameSending: req.params.username,
+      usernameReceiving: req.body.usernameReceiving,
+      amount: req.body.amount
+    }
+    await User.sendFunds(sendFundsDetails);
+    return res.status(200).json({ message: "Funds sent successfully." });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 
 /** Handle 404 errors. */
 app.use((req, res, next) => {
