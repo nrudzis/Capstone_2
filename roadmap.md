@@ -3,13 +3,14 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Fri, 21 Feb 2025 21:38:49 GMT*
+*Updated: Thu, 27 Feb 2025 23:56:36 GMT*
 
 ## Swap
 
 ### Completed
 - Revise roadmap order to reflect priority of minimal requirements
 - Send/receive funds backend route logic/error handling
+- New SQL tables for asset purchases/sales
 
 ### To Do
 #### Fund account
@@ -18,6 +19,10 @@ This document outlines current and planned milestones for the Swap project.
 
 #### API for other purchases
 - Ability to purchase assets (Alpaca markets API)
+    - `transactions` table:
+        - Rename to `transfers` for clarity
+        - Add column to indicate cash or asset transfer
+        - Change `amount` col to more flexible NUMERIC precision to accommodate other assets
 
 #### Login
 - Login route, tokens
