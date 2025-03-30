@@ -25,9 +25,9 @@ CREATE TABLE transactions (
 
 CREATE TABLE assets (
   id SERIAL PRIMARY KEY,
-  symbol VARCHAR(15) NOT NULL,
+  symbol VARCHAR(15) UNIQUE NOT NULL,
   name VARCHAR(25) NOT NULL,
-  category VARCHAR(10) NOT NULL
+  class VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE users_assets (
@@ -38,7 +38,8 @@ CREATE TABLE users_assets (
   asset_id INTEGER
     REFERENCES assets(id) ON DELETE RESTRICT,
     -- don't delete referenced asset
-  asset_quantity NUMERIC(30) NOT NULL
+  asset_quantity NUMERIC(30) NOT NULL,
+  CONSTRAINT unique_user_asset UNIQUE (username, asset_id)
 );
 
 CREATE TABLE market_transactions (
@@ -52,6 +53,6 @@ CREATE TABLE market_transactions (
   asset_id INTEGER
     REFERENCES assets(id) ON DELETE RESTRICT,
     -- don't delete referenced asset
-  asset_unit_price NUMERIC(30) NOT NULL,
+  asset_unit_price NUMERIC NOT NULL,
   asset_quantity NUMERIC(30) NOT NULL
 );
