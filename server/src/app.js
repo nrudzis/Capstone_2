@@ -1,11 +1,14 @@
 /** Express app for swap. */
 
-import express from "express";
-import cors from "cors";
-import { NotFoundError } from "./expressError.js";
-import morgan from "morgan";
+const express = require("express");
+const cors = require("cors");
 
-import User from "./models/user.js";
+const { NotFoundError } = require("./expressError.js");
+
+const authRoutes = require("./routes/auth");
+const usersRoutes = require("./routes/users");
+
+const morgan = require("morgan");
 
 const app = express();
 
@@ -14,50 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
 
-/** User model check 3: register */
-app.post("/register", async (req, res, next) => {
-  try {
-    const user = await User.register(req.body);
-    return res.status(201).json({ user });
-  } catch (err) {
-    return next(err);
-  }
-});
-
-/** User model check 1: get all */
-app.get("/users", async (req, res, next) => {
-  try {
-    const users = await User.getAll();
-    return res.json({ users });
-  } catch (err) {
-    return next (err);
-  }
-});
-
-/** User model check 2: get individual */
-app.get("/users/:username", async (req, res, next) => {
-  try {
-    const user = await User.get(req.params.username);
-    return res.json({ user });
-  } catch (err) {
-    return next (err);
-  }
-});
-
-/** User model check 4: send funds */
-app.post("/users/:username/send-funds", async (req, res, next) => {
-  try {
-    const sendFundsDetails = {
-      usernameSending: req.params.username,
-      usernameReceiving: req.body.usernameReceiving,
-      amount: req.body.amount
-    }
-    await User.sendFunds(sendFundsDetails);
-    return res.status(200).json({ message: "Funds sent successfully." });
-  } catch (err) {
-    return next(err);
-  }
-});
+app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
 
 
 /** Handle 404 errors. */
