@@ -1,12 +1,12 @@
 /** Database setup for swap. */
 
-import pg from "pg";
-import { getDatabaseUri } from "./config.js";
+const { Client } = require("pg");
+const { getDatabaseUri } = require("./config.js");
 
-let db = new pg.Client({
+const db = new Client({
   connectionString: getDatabaseUri()
 });
 
 db.connect();
 
-export default db;
+module.exports = db;

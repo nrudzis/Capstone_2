@@ -1,6 +1,6 @@
 /* Error handling. */
 
-export class ExpressError extends Error {
+class ExpressError extends Error {
   constructor(message, status) {
     super();
     this.message = message;
@@ -10,7 +10,7 @@ export class ExpressError extends Error {
 
 /** 404 NOT FOUND error. */
 
-export class NotFoundError extends ExpressError {
+class NotFoundError extends ExpressError {
   constructor(message = "Not Found") {
     super(message, 404);
   }
@@ -18,8 +18,14 @@ export class NotFoundError extends ExpressError {
 
 /** 400 BAD REQUEST error. */
 
-export class BadRequestError extends ExpressError {
+class BadRequestError extends ExpressError {
   constructor(message = "Bad Request") {
     super(message, 400);
   }
 }
+
+module.exports = {
+  ExpressError,
+  NotFoundError,
+  BadRequestError,
+};

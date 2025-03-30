@@ -1,13 +1,24 @@
 /** Shared config for application. */
 
-import "dotenv/config";
+require("dotenv/config");
 
-export const PORT = +process.env.PORT || 3001;
+const PORT = +process.env.PORT || 3001;
 
-export const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === "test" ? 1 : 12;
+const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === "test" ? 1 : 12;
 
-export function getDatabaseUri() {
+const API_BASE_URL_1 = "https://data.alpaca.markets";
+const API_BASE_URL_2 = "https://paper-api.alpaca.markets";
+
+function getDatabaseUri() {
   return (process.env.NODE_ENV === "test")
     ? "postgresql:///swap_test"
     : process.env.DATABASE_URL || "postgresql:///swap"
 }
+
+module.exports = {
+  PORT,
+  BCRYPT_WORK_FACTOR,
+  API_BASE_URL_1,
+  API_BASE_URL_2,
+  getDatabaseUri 
+};
