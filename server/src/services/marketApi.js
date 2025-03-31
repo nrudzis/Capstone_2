@@ -109,9 +109,8 @@ class MarketApi {
    **/
 
   static async getCryptoPrice(symbol) {
-    const encodedSymbol = encodeURIComponent(symbol);
     const params = {
-      symbols: encodedSymbol
+      symbols: symbol 
     }
     const { data } =  await this.request("v1beta3/crypto/us/latest/quotes", params);
     const latestAskPrice = data.quotes[symbol].ap;

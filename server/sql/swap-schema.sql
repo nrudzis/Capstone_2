@@ -38,7 +38,7 @@ CREATE TABLE users_assets (
   asset_id INTEGER
     REFERENCES assets(id) ON DELETE RESTRICT,
     -- don't delete referenced asset
-  asset_quantity NUMERIC(30) NOT NULL,
+  asset_quantity NUMERIC NOT NULL,
   CONSTRAINT unique_user_asset UNIQUE (username, asset_id)
 );
 
