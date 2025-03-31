@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 const db = require("../db.js");
+const User = require("./user.js");
 
 async function commonBeforeAll() {
   await db.query("DELETE FROM users");
@@ -27,6 +28,7 @@ async function commonBeforeAll() {
 }
 
 async function commonBeforeEach() {
+  User.commitTransaction = jest.fn();
   await db.query("BEGIN");
 }
 

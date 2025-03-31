@@ -82,6 +82,10 @@ class User {
     return rows[0];
   }
 
+  static async commitTransaction() {
+    return await db.query("COMMIT");
+  }
+
   /** Given a sending username, receiving username, and amount to send,
    * deducts amount from sending user's balance and adds it to receiving
    * user's balance.
@@ -117,7 +121,6 @@ class User {
 
     try {
       await db.query("BEGIN");
-      await db.query("SAVEPOINT sendFunds_savepoint");
 
       const addTransaction = await db.query(
         `INSERT INTO transactions
@@ -161,14 +164,15 @@ class User {
 
       if (!updateReceivingUserBalance.rows[0]) throw new BadRequestError(`Error updating receiving user balance: ${usernameReceiving}. Transaction rolled back.`);
 
+      await this.commitTransaction();
+
       return addTransaction.rows[0];
     } catch (err) {
-      await db.query("ROLLBACK TO SAVEPOINT sendFunds_savepoint");
+      await db.query("ROLLBACK");
       console.error(err);
       throw new BadRequestError("Transaction failed.");
     }
   }
-
 
   //orderType = 'BUY'
   //  MarketApi.sendOrder(symbol)
@@ -197,7 +201,6 @@ class User {
     } else {
       try {
         await db.query("BEGIN");
-        await db.query("SAVEPOINT marketBuy_savepoint");
 
         const updateUserBalance = await db.query(
           `UPDATE balances
@@ -261,7 +264,6 @@ class User {
             buyQty
           ],
         );
-
         if (!addMarketTransaction.rows[0]) throw new BadRequestError(`Error adding market_transaction: buy ${buyQty} ${symbol}. Transaction rolled back.`);
 
         const updateUsersAssets = await db.query(
@@ -288,12 +290,14 @@ class User {
 
         if (!updateUsersAssets.rows[0]) throw new BadRequestError(`Error adding or updating users_assets for asset ${assetId}. Transaction rolled back.`);
 
+        await this.commitTransaction();
+
         return {
           transactionId: addMarketTransaction.rows[0].transactionId,
           assetId: assetId
         }
       } catch (err) {
-        await db.query("ROLLBACK TO SAVEPOINT marketBuy_savepoint");
+        await db.query("ROLLBACK");
         console.error(err);
         throw new BadRequestError("Transaction failed.");
       }
@@ -329,7 +333,6 @@ class User {
     } else {
       try {
         await db.query("BEGIN");
-        await db.query("SAVEPOINT marketSell_savepoint");
 
         const { symbol, unitPrice } = await MarketApi.sendOrder(sellSymbol);
 
@@ -412,12 +415,14 @@ class User {
 
         if (!updateUserBalance.rows[0]) throw new BadRequestError(`Error updating user balance: ${username}. Transaction rolled back.`);
 
+        await this.commitTransaction();
+
         return {
           transactionId: addMarketTransaction.rows[0].transactionId,
           assetId: assetId
         }
       } catch (err) {
-        await db.query("ROLLBACK TO SAVEPOINT marketSell_savepoint");
+        await db.query("ROLLBACK");
         console.error(err);
         throw new BadRequestError("Transaction failed.");
       }
