@@ -3,27 +3,18 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Thu, 27 Feb 2025 23:56:36 GMT*
+*Updated: Mon, 31 Mar 2025 06:19:33 GMT*
 
 ## Swap
 
 ### Completed
+- Jest tests for User and MarketApi clases
+- Ability to purchase assets (Alpaca markets API)
 - Revise roadmap order to reflect priority of minimal requirements
 - Send/receive funds backend route logic/error handling
 - New SQL tables for asset purchases/sales
 
 ### To Do
-#### Fund account
-- Add ability for new users to fund their account with fake money
-    - Add logic to button that funds user account when balance is $0
-
-#### API for other purchases
-- Ability to purchase assets (Alpaca markets API)
-    - `transactions` table:
-        - Rename to `transfers` for clarity
-        - Add column to indicate cash or asset transfer
-        - Change `amount` col to more flexible NUMERIC precision to accommodate other assets
-
 #### Login
 - Login route, tokens
 
@@ -35,6 +26,10 @@ This document outlines current and planned milestones for the Swap project.
     - Render for client
     - Supabase for server
 
+#### Fund account
+- Add ability for new users to fund their account with fake money
+    - Add logic to button that funds user account when balance is $0
+
 #### Home page, User account UI
 - Home page
     - Replace Vite boilerplate
@@ -45,8 +40,7 @@ This document outlines current and planned milestones for the Swap project.
     - Pie chart for asset types owned (initially only one)
 
 #### Send/receive funds
-- Add ability for users to send funds to other users
-    - Front end form/React UI
+- Front end form/React UI to send funds to other users
 
 #### Automate with CI
 - Create a basic CI workflow and automate with GitHub Actions
