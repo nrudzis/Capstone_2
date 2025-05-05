@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import SwapApi from './api.js'
+import Login from './Login.jsx'
 import Register from './Register.jsx'
 import User from './User.jsx'
 
@@ -17,7 +17,11 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/register",
+    path: "/auth/login",
+    element: <Login />
+  },
+  {
+    path: "/auth/register",
     element: <Register />
   },
   {
