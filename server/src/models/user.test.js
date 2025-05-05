@@ -1,5 +1,6 @@
 const db = require("../db.js");
 const {
+  UnauthorizedError,
   NotFoundError,
   BadRequestError,
 } = require("../expressError.js");
@@ -16,6 +17,35 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 jest.mock("../services/marketApi.js");
 const MarketApi = require("../services/marketApi.js");
+
+/************************************** authenticate */
+
+describe("authenticate", () => {
+  test("works", async () => {
+    const user = await User.authenticate("u1", "password1");
+    expect(user).toEqual({
+      username: "u1",
+    });
+  });
+
+  test("unauth if no such user", async () => {
+    try {
+      await User.authenticate("nope", "password");
+      fail();
+    } catch (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
+  });
+
+  test("unauth if wrong password", async () => {
+    try {
+    await User.authenticate("u1", "wrong");
+    fail();
+    } catch (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
+  });
+});
 
 /************************************** register */
 
