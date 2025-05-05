@@ -1,12 +1,13 @@
 /** Routes for users */
 
 const express = require("express");
+const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const User = require("../models/user");
 
 const router = express.Router();
 
 /** User model check 1: get all */
-router.get("/", async (req, res, next) => {
+router.get("/", ensureLoggedIn, async (req, res, next) => {
   try {
     const users = await User.getAll();
     return res.json({ users });
@@ -16,7 +17,7 @@ router.get("/", async (req, res, next) => {
 });
 
 /** User model check 2: get individual */
-router.get("/:username", async (req, res, next) => {
+router.get("/:username", ensureCorrectUser, async (req, res, next) => {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
@@ -26,7 +27,7 @@ router.get("/:username", async (req, res, next) => {
 });
 
 /** User model check 4: send funds */
-router.post("/:username/send-funds", async (req, res, next) => {
+router.post("/:username/send-funds", ensureCorrectUser, async (req, res, next) => {
   try {
     const sendFundsDetails = {
       usernameSending: req.params.username,
@@ -41,7 +42,7 @@ router.post("/:username/send-funds", async (req, res, next) => {
 });
 
 /** User model check 5: market transaction */
-router.post("/:username/market-transaction", async (req, res, next) => {
+router.post("/:username/market-transaction", ensureCorrectUser, async (req, res, next) => {
   try {
     const marketTransactionDetails = {
       username: req.params.username,
