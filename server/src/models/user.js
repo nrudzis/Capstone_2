@@ -135,6 +135,52 @@ class User {
     return await db.query("COMMIT");
   }
 
+  /** Fund account.
+   **/
+
+  static async fundAccount(username) {
+    const userCheck = await db.query(
+      `SELECT username
+       FROM users 
+       WHERE username = $1`,
+      [username],
+    );
+
+    if(!userCheck.rows[0]) throw NotFoundError(`No user: ${username}`);
+
+    try {
+      await db.query("BEGIN");
+
+      await db.query(
+        `DELETE FROM balances
+         WHERE username = $1`,
+        [username],
+      );
+
+      const addFunds = await db.query(
+        `INSERT INTO balances
+           (balance,
+           username)
+         VALUES ($1, $2)
+         RETURNING id AS "balanceId"`,
+        [
+          100000.00,
+          username
+        ],
+      );
+
+      if (!addFunds.rows[0]) throw new BadRequestError(`Unable to fund account: ${username}.`);
+
+      await this.commitTransaction();
+
+      return addFunds.rows[0];
+    } catch (err) {
+      await db.query("ROLLBACK");
+      console.error(err);
+      throw new BadRequestError("Transaction failed.");
+    }
+  }
+
   /** Given a sending username, receiving username, and amount to send,
    * deducts amount from sending user's balance and adds it to receiving
    * user's balance.

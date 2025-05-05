@@ -26,6 +26,16 @@ router.get("/:username", ensureCorrectUser, async (req, res, next) => {
   }
 });
 
+/** User model check 6: fund account */
+router.post("/:username/fund-account", ensureCorrectUser, async (req, res, next) => {
+  try {
+    await User.fundAccount(req.params.username);
+    return res.status(200).json({ message: "Account successfully funded." });
+  } catch (err) {
+    return next(err)
+  }
+});
+
 /** User model check 4: send funds */
 router.post("/:username/send-funds", ensureCorrectUser, async (req, res, next) => {
   try {
