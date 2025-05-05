@@ -8,7 +8,10 @@ class SwapApi {
 
   static async request(endpoint, data = {}, method = "get") {
     const url = `${SWAP_BASE_URL}/${endpoint}`;
-    const headers = {}; // TODO: implement tokens
+    const headers = { "Content-type": "application/json" };
+
+    const token = localStorage.getItem("token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
 
     // define axios configuration
     const config = {
@@ -26,10 +29,19 @@ class SwapApi {
       // TODO: implement handling logic
     }
   }
+
+  /** Log in a user. */
+  static async login(data) {
+    const res = await this.request("auth/token", data, "post");
+    if (res.data.token) localStorage.setItem("token", res.data.token);
+    return { success: true, username: res.data.username };
+  }
+
   /** Register a new user. */
   static async register(data) {
-    const res = await this.request("register", data, "post");
-    return res.user;
+    const res = await this.request("auth/register", data, "post");
+    if (res.data.token) localStorage.setItem("token", res.data.token);
+    return { success: true, username: res.data.username }
   }
 
   /** Get details on a user. */
