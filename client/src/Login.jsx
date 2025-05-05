@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import SwapApi from './api.js'
 
-function Register() {
+function Login() {
   const [formData, setFormData] = useState({
     username: "",
     password: ""
@@ -20,7 +20,7 @@ function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const { success, username } = await SwapApi.register(formData);
+    const { success, username } = await SwapApi.login(formData);
     if (success) navigate(`/users/${username}`);
   };
 
@@ -47,10 +47,10 @@ function Register() {
             onChange={handleChange}
           />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit">Log In</button>
       </form>
     </>
   )
 }
 
-export default Register;
+export default Login;
