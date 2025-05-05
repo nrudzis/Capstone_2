@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 const MarketApi = require("../services/marketApi.js");
 const db = require("../db.js");
+const { groupAndNest } = require("./helpers/group.js");
 
 /** Related functions for users. */
 
@@ -43,7 +44,7 @@ class User {
 
   /** Register a new user.
    *
-   * Returns { username }
+   * Returns { username }.
    *
    * Throws BadRequestError on duplicate usernames.
    **/
@@ -102,17 +103,32 @@ class User {
   static async get(username) {
     const { rows } = await db.query(
       `SELECT u.username,
-              b.balance AS "accountBalance"
+              b.balance AS "accountBalance",
+              ua.asset_quantity AS "assetQuantity",
+              a.symbol AS "assetSymbol",
+              a.name AS "assetName",
+              a.class AS "assetClass"
        FROM users u
        LEFT JOIN balances b
        ON u.username = b.username
+       LEFT JOIN users_assets ua
+       ON u.username = ua.username
+       LEFT JOIN assets a
+       ON a.id = ua.asset_id
        WHERE u.username = $1`,
       [username],
     );
 
     if (!rows[0]) throw new NotFoundError(`No user: ${username}`);
 
-    return rows[0];
+    const user = groupAndNest(rows, "username", "assets", [
+      "assetQuantity",
+      "assetSymbol",
+      "assetName",
+      "assetClass"
+    ])
+
+    return user[0];
   }
 
   static async commitTransaction() {
