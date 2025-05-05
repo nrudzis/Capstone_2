@@ -1,4 +1,8 @@
-const { NotFoundError, BadRequestError } = require("../expressError.js");
+const {
+  UnauthorizedError,
+  NotFoundError,
+  BadRequestError
+} = require("../expressError.js");
 const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 const MarketApi = require("../services/marketApi.js");
@@ -7,6 +11,35 @@ const db = require("../db.js");
 /** Related functions for users. */
 
 class User {
+
+  /** Authenticate a user with username and password.
+   *
+   * Returns { username }.
+   *
+   * Throws UnauthorizedError if user not found or wrong password.
+   */
+
+  static async authenticate(username, password) {
+    const result = await db.query(
+      `SELECT username,
+              password
+       FROM users
+       WHERE username = $1`,
+      [username],
+    );
+
+    const user = result.rows[0];
+
+    if (user) {
+      const isValid = await bcrypt.compare(password, user.password);
+      if (isValid) {
+        delete user.password;
+        return user;
+      }
+    }
+
+    throw new UnauthorizedError("Invalid username or password.");
+  }
 
   /** Register a new user.
    *
