@@ -55,6 +55,13 @@ class SwapApi {
     const res = await this.request("users");
     return res.data.users;
   }
+
+  /** Log out user. */
+  static logout() {
+    localStorage.removeItem("token");
+    return { success: true, message: "Log out success." };
+  }
+
 }
 
 export default SwapApi;
