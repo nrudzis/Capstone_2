@@ -62,6 +62,11 @@ class SwapApi {
     return { success: true, message: "Log out success." };
   }
 
+  /** Fund user's account */
+  static async fundAccount(username) {
+    await this.request(`users/${username}/fund-account`, {}, "post");
+    return { success: true, message: "Fund account success." };
+  }
 }
 
 export default SwapApi;

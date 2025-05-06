@@ -13,7 +13,7 @@ import User from './User.jsx'
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: async () => await SwapApi.getAllUsers(),
+    //loader: async () => await SwapApi.getAllUsers(),
     element: <App />,
   },
   {
@@ -26,7 +26,6 @@ const router = createBrowserRouter([
   },
   {
     path: "/users/:username",
-    loader: async ({ params }) => await SwapApi.getUser(params.username),
     element: <User />
   }
 ]);

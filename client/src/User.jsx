@@ -1,15 +1,53 @@
-import { useLoaderData } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router'
 import FundAccount from './FundAccount.jsx'
+import SwapApi from './api.js'
 
 function User() {
 
-  const user = useLoaderData();
+  const { username } = useParams();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getUser = async () => {
+    setLoading(true);
+    const userData = await SwapApi.getUser(username);
+    setUser(userData);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, [username]);
+
+  const handleLogout = () => {
+    SwapApi.logout();
+    navigate("/auth/login");
+  };
 
   return (
     <>
-      <h1>Username: {user.username}</h1>
-      <h2>Account Balance: ${user.accountBalance ? user.accountBalance : "0.00"}</h2>
-      {!user.accountBalance && <FundAccount />}
+      {loading && <h2>Loading...</h2>}
+      {!loading && (
+        <>
+          <button onClick={handleLogout}>Log Out</button>
+          <h1>Username: {user.username}</h1>
+          <h2>Cash Account Balance: ${user.accountBalance ? user.accountBalance : "0.00"}</h2>
+          {!user.accountBalance && <FundAccount user={user} getUser={getUser} />}
+          <h2>Assets:</h2>
+          {user.assets.length ? (
+            <ul>
+              {user.assets.map(asset => (
+                <li>
+                  <strong>{asset.assetSymbol}</strong>: {asset.assetQuantity} {asset.assetName}
+                </li>
+              ))}
+            </ul>
+          ) : "you have not purchased any assets"}
+        </>
+      )}
     </>
   )
 }
