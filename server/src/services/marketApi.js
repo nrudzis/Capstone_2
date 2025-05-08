@@ -53,7 +53,7 @@ class MarketApi {
       }
     })();
     return {
-      symbol: assetInfo.symbol,
+      symbol: assetInfo.symbol.replace(/\//g, ''),
       assetClass: assetInfo.assetClass,
       name: assetInfo.name,
       unitPrice: assetPrice
