@@ -54,7 +54,7 @@ function User() {
                 </li>
               ))}
             </ul>
-          ) : "you have not purchased any assets"}
+          ) : "You have not purchased any assets."}
           {activePanel === "sendFunds" && (
             <SendFunds
               username={username}

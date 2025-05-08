@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import SwapApi from './api.js'
 
 function Login() {
@@ -28,7 +28,7 @@ function Login() {
     <>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="username">Username: </label>
           <input
             type="text"
             id="username"
@@ -38,7 +38,7 @@ function Login() {
           />
         </div>
         <div>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Password: </label>
           <input
             type="password"
             id="password" 
@@ -49,6 +49,8 @@ function Login() {
         </div>
         <button type="submit">Log In</button>
       </form>
+      <br/>
+      <p>Don't have an account? Click <Link to="/auth/register">here</Link> to register.</p>
     </>
   )
 }
