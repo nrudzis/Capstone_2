@@ -72,6 +72,12 @@ class SwapApi {
     await this.request(`users/${usernameSending}/send-funds`, data, "post");
     return { success: true, message: "Send funds success." }
   }
+
+  /** Buy/sell assets. */
+  static async marketTransaction(username, data) {
+    await this.request(`users/${username}/market-transaction`, data, "post")
+    return { success: true, message: "Transaction success." }
+  }
 }
 
 export default SwapApi;
