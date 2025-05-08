@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import FundAccount from './FundAccount.jsx'
 import SendFunds from './SendFunds.jsx'
+import BuySell from './BuySell.jsx'
 import SwapApi from './api.js'
 
 function User() {
@@ -35,7 +36,10 @@ function User() {
       {!loading && (
         <>
           {user.accountBalance &&
-            <button onClick={() => setActivePanel("sendFunds")}>Send Funds</button>
+            <>
+              <button onClick={() => setActivePanel("sendFunds")}>Send Funds</button>
+              <button onClick={() => setActivePanel("buySell")}>Buy/Sell</button>
+            </>
           }
           <button onClick={handleLogout}>Log Out</button>
           <h1>Username: {user.username}</h1>
@@ -56,6 +60,17 @@ function User() {
               username={username}
               onSubmit={async (username, formData) => {
                 const { success } = await SwapApi.sendFunds(username, formData);
+                setActivePanel(null);
+                if (success) await getUser();
+              }}
+              onCancel={() => setActivePanel(null)}
+            />
+          )}
+          {activePanel === "buySell" && (
+            <BuySell
+              username={username}
+              onSubmit={async (username, formData) => {
+                const { success } = await SwapApi.marketTransaction(username, formData);
                 setActivePanel(null);
                 if (success) await getUser();
               }}
