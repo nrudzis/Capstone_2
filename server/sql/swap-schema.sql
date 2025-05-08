@@ -26,7 +26,7 @@ CREATE TABLE transactions (
 CREATE TABLE assets (
   id SERIAL PRIMARY KEY,
   symbol VARCHAR(15) UNIQUE NOT NULL,
-  name VARCHAR(25) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   class VARCHAR(10) NOT NULL
 );
 
