@@ -1,37 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-//import { useLoaderData } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  //const users = useLoaderData();
+  const navigate = useNavigate();
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      {/*<p>Users: ${JSON.stringify(users)}</p>*/}
+      <h1>SWAP</h1>
+      <ul>
+        <li style={{textAlign: "left"}}>Add virtual funds.</li>
+        <li style={{textAlign: "left"}}>Send and receive funds from other users.</li>
+        <li style={{textAlign: "left"}}>Buy and sell stocks and cryptocurrencies.</li>
+        <li style={{textAlign: "left"}}>Visualize your transactions and portfolio.</li>
+      </ul>
+      <br/>
+      <button onClick={() => navigate("/auth/login")}>Log In</button>
+      <button onClick={() => navigate("/auth/register")}>Register</button>
     </>
   )
 }
