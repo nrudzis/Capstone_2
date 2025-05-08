@@ -423,9 +423,6 @@ class User {
       ],
     );
 
-    console.log("QUANTITY OWNED TYPE", typeof userAssetCheck.rows[0].assetQuantity);
-    console.log("QUANTITY SELLING TYPE", typeof sellQty);
-
     if (!userAssetCheck.rows[0] || Number(userAssetCheck.rows[0].assetQuantity) < Number(sellQty)) {
       throw new BadRequestError(`User doesn't have sufficient asset quantity: ${username}`);
     } else {
