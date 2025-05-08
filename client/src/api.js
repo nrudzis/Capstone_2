@@ -8,8 +8,7 @@ class SwapApi {
 
   static async request(endpoint, data = {}, method = "get") {
     const url = `${SWAP_BASE_URL}/${endpoint}`;
-    const headers = { "Content-type": "application/json" };
-
+    const headers = {};
     const token = localStorage.getItem("token");
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -62,10 +61,16 @@ class SwapApi {
     return { success: true, message: "Log out success." };
   }
 
-  /** Fund user's account */
+  /** Fund user's account. */
   static async fundAccount(username) {
     await this.request(`users/${username}/fund-account`, {}, "post");
     return { success: true, message: "Fund account success." };
+  }
+
+  /** Send funds to another user. */
+  static async sendFunds(usernameSending, data) {
+    await this.request(`users/${usernameSending}/send-funds`, data, "post");
+    return { success: true, message: "Send funds success." }
   }
 }
 
