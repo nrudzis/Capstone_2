@@ -201,7 +201,7 @@ class User {
     const sendingUserResult = sendingUserCheck.rows[0];
 
     if (!sendingUserResult) throw new NotFoundError(`Sending user not found: ${usernameSending}.`);
-    if (!sendingUserResult.accountBalance || Number(sendingUserResult.accountBalance) < amount) throw new BadRequestError(`Sending user does not have sufficient funds: ${usernameSending}.`);
+    if (!sendingUserResult.accountBalance || Number(sendingUserResult.accountBalance) < Number(amount)) throw new BadRequestError(`Sending user does not have sufficient funds: ${usernameSending}.`);
 
     const receivingUserCheck = await db.query(
       `SELECT username
@@ -291,7 +291,7 @@ class User {
       [username],
     );
 
-    if (userBalanceCheck.rows[0].accountBalance < cost) {
+    if (Number(userBalanceCheck.rows[0].accountBalance) < Number(cost)) {
       throw new BadRequestError(`User does not have sufficient funds: ${username}.`);
     } else {
       try {
@@ -423,7 +423,10 @@ class User {
       ],
     );
 
-    if (!userAssetCheck.rows[0] || userAssetCheck.rows[0].assetQuantity < sellQty) {
+    console.log("QUANTITY OWNED TYPE", typeof userAssetCheck.rows[0].assetQuantity);
+    console.log("QUANTITY SELLING TYPE", typeof sellQty);
+
+    if (!userAssetCheck.rows[0] || Number(userAssetCheck.rows[0].assetQuantity) < Number(sellQty)) {
       throw new BadRequestError(`User doesn't have sufficient asset quantity: ${username}`);
     } else {
       try {
