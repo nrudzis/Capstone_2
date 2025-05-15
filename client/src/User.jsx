@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router'
+import { useParams, useNavigate, useOutletContext } from 'react-router'
 import FundAccount from './FundAccount.jsx'
 import SendFunds from './SendFunds.jsx'
 import BuySell from './BuySell.jsx'
@@ -9,6 +9,7 @@ function User() {
 
   const { username } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useOutletContext();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +29,7 @@ function User() {
   const handleLogout = () => {
     SwapApi.logout();
     navigate("/auth/login");
+    showToast("Successfully logged out!");
   };
 
   return (
@@ -59,9 +61,14 @@ function User() {
             <SendFunds
               username={username}
               onSubmit={async (username, formData) => {
-                const { success } = await SwapApi.sendFunds(username, formData);
+                const result = await SwapApi.sendFunds(username, formData);
                 setActivePanel(null);
-                if (success) await getUser();
+                if (result.success) {
+                  await getUser();
+                  showToast("Funds successfully sent!");
+                } else {
+                  showToast(result.error);
+                }
               }}
               onCancel={() => setActivePanel(null)}
             />
@@ -70,9 +77,14 @@ function User() {
             <BuySell
               username={username}
               onSubmit={async (username, formData) => {
-                const { success } = await SwapApi.marketTransaction(username, formData);
+                const result = await SwapApi.marketTransaction(username, formData);
                 setActivePanel(null);
-                if (success) await getUser();
+                if (result.success) {
+                  await getUser();
+                  showToast("Market transaction successful!");
+                } else {
+                  showToast(result.error);
+                }
               }}
               onCancel={() => setActivePanel(null)}
             />

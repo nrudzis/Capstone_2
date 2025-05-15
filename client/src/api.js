@@ -25,7 +25,8 @@ class SwapApi {
       return await axios(config);
     } catch (err) {
       console.error("API Error:", err.response);
-      // TODO: implement handling logic
+      const message = err.response || "An unknown error occured.";
+      return { success: false, error: message }
     }
   }
 

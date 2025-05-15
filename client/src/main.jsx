@@ -5,6 +5,7 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 import './index.css'
+import Layout from './Layout.jsx'
 import App from './App.jsx'
 import Login from './Login.jsx'
 import Register from './Register.jsx'
@@ -13,21 +14,14 @@ import User from './User.jsx'
 const router = createBrowserRouter([
   {
     path: "/",
-    //loader: async () => await SwapApi.getAllUsers(),
-    element: <App />,
+    element: <Layout />,
+    children: [
+      { index: true, element: <App /> },
+      { path: "/auth/login", element: <Login /> },
+      { path: "/auth/register", element: <Register /> },
+      { path: "/users/:username", element: <User /> },
+    ],
   },
-  {
-    path: "/auth/login",
-    element: <Login />
-  },
-  {
-    path: "/auth/register",
-    element: <Register />
-  },
-  {
-    path: "/users/:username",
-    element: <User />
-  }
 ]);
 
 createRoot(document.getElementById('root')).render(
