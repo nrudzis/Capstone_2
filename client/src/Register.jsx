@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router'
+import { useNavigate, useOutletContext, Link } from 'react-router'
 import SwapApi from './api.js'
 
 function Register() {
@@ -9,6 +9,7 @@ function Register() {
   });
 
   const navigate = useNavigate();
+  const { showToast } = useOutletContext();
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -20,8 +21,13 @@ function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const { success, username } = await SwapApi.register(formData);
-    if (success) navigate(`/users/${username}`);
+    const result = await SwapApi.register(formData);
+    if (result.success) {
+      navigate(`/users/${result.username}`);
+      showToast(`Successfully registered. Welcome, ${result.username}!`);
+    } else {
+      showToast(result.error);
+    }
   };
 
   return (
