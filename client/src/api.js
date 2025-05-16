@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const SWAP_BASE_URL = process.env.NODE_ENV === "production"
-                        ? process.env.SERVER_BASE_URL
+const SWAP_BASE_URL = import.meta.env.MODE === "production"
+                        ? import.meta.env.VITE_SERVER_BASE_URL
                         : "http://localhost:3001";
 
 class SwapApi {
@@ -35,6 +35,7 @@ class SwapApi {
   static async login(data) {
     try {
       const res = await this.request("auth/token", data, "post");
+      console.log(res.data);
       if (res.data.token) localStorage.setItem("token", res.data.token);
       return { success: true, username: res.data.username };
     } catch (err) {
