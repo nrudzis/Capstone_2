@@ -3,7 +3,7 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Mon, 31 Mar 2025 06:19:33 GMT*
+*Updated: Fri, 16 May 2025 03:18:37 GMT*
 
 ## Swap
 
@@ -13,34 +13,36 @@ This document outlines current and planned milestones for the Swap project.
 - Revise roadmap order to reflect priority of minimal requirements
 - Send/receive funds backend route logic/error handling
 - New SQL tables for asset purchases/sales
-
-### To Do
-#### Login
 - Login route, tokens
-
-#### Auth
 - Auth middleware
-
-#### Publish minimal working version of app
-- With basic UI and above capabilities working, move to production version
-    - Render for client
-    - Supabase for server
-
-#### Fund account
 - Add ability for new users to fund their account with fake money
     - Add logic to button that funds user account when balance is $0
-
-#### Home page, User account UI
+- Front end form to send funds to other users
+- Messages to to provide feedback to users
 - Home page
     - Replace Vite boilerplate
 - User account page
-    - Add more structure
     - Display minimum db data
     - Account balance
-    - Pie chart for asset types owned (initially only one)
+- With basic UI and above capabilities working, move to production version
+    - Render for client, server
+    - Supabase for db
 
-#### Send/receive funds
-- Front end form/React UI to send funds to other users
+### To Do
+
+#### Form validation
+- Add client side validation, server side validation with JSON schema
+
+#### Home page, User account UI
+- Improve styling with CSS, MUI
+- Chart for asset types owned (initially only one)
+- Display additional info from db, like transaction history
+
+#### Additional testing
+- Fix broken tests, add more test coverage
+
+#### Additional views
+- User edit, delete information
 
 #### Automate with CI
 - Create a basic CI workflow and automate with GitHub Actions
@@ -53,5 +55,3 @@ This document outlines current and planned milestones for the Swap project.
 
 #### Send/recieve non-cash assets
 - Ability to send non-cash assets to other users
-
-#### More...
