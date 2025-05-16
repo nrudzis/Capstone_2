@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const SWAP_BASE_URL = process.env.NODE_ENV === "production"
-                        ? process.env.SUPABASE_URL
+                        ? process.env.SERVER_BASE_URL
                         : "http://localhost:3001";
 
 class SwapApi {
