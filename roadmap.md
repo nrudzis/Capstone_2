@@ -3,7 +3,7 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Fri, 16 May 2025 03:18:37 GMT*
+*Updated: Sat, 17 May 2025 22:50:12 GMT*
 
 ## Swap
 
@@ -27,11 +27,16 @@ This document outlines current and planned milestones for the Swap project.
 - With basic UI and above capabilities working, move to production version
     - Render for client, server
     - Supabase for db
+- Client-side validation with React Hook Form, server-side validation with jsonschema
+    - now implemented for Login/Register forms (client) and routes (server)
+- UI
+    - initial MUI TextField and Button components for Login/Register and welcome page
 
 ### To Do
 
 #### Form validation
-- Add client side validation, server side validation with JSON schema
+- Client side validation, server side validation with JSON schema
+    - Implement in user account page
 
 #### Home page, User account UI
 - Improve styling with CSS, MUI
