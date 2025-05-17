@@ -1,4 +1,6 @@
 import './App.css'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router'
 
 function App() {
@@ -15,8 +17,22 @@ function App() {
         <li style={{textAlign: "left"}}>Visualize your transactions and portfolio.</li>
       </ul>
       <br/>
-      <button onClick={() => navigate("/auth/login")}>Log In</button>
-      <button onClick={() => navigate("/auth/register")}>Register</button>
+      <Box>
+        <Button
+          variant="contained"
+          sx={{ m: 2 }}
+          onClick={() => navigate("/auth/login")}
+        >
+          Log In
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ m: 2 }}
+          onClick={() => navigate("/auth/register")}
+        >
+          Register
+        </Button>
+      </Box>
     </>
   )
 }
