@@ -10,7 +10,8 @@ const { ExpressError } = require("../expressError");
 function validateSchema(schema) {
   return (req, res, next) => {
     try {
-      const result = jsonschema.validate(req.body, schema);
+      const data = { ...req.body, ...req.params }
+      const result = jsonschema.validate(data, schema);
       if (!result.valid) {
         const errorStack = result.errors.map(err => err.stack);
         throw new ExpressError(errorStack, 400);
