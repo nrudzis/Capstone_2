@@ -60,32 +60,18 @@ function User() {
           {activePanel === "sendFunds" && (
             <SendFunds
               username={username}
-              onSubmit={async (username, formData) => {
-                const result = await SwapApi.sendFunds(username, formData);
-                setActivePanel(null);
-                if (result.success) {
-                  await getUser();
-                  showToast("Funds successfully sent!");
-                } else {
-                  showToast(result.error);
-                }
-              }}
+              setActivePanel={setActivePanel}
+              getUser={getUser}
+              showToast={showToast}
               onCancel={() => setActivePanel(null)}
             />
           )}
           {activePanel === "buySell" && (
             <BuySell
               username={username}
-              onSubmit={async (username, formData) => {
-                const result = await SwapApi.marketTransaction(username, formData);
-                setActivePanel(null);
-                if (result.success) {
-                  await getUser();
-                  showToast("Market transaction successful!");
-                } else {
-                  showToast(result.error);
-                }
-              }}
+              setActivePanel={setActivePanel}
+              getUser={getUser}
+              showToast={showToast}
               onCancel={() => setActivePanel(null)}
             />
           )}

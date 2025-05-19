@@ -1,54 +1,112 @@
-import { useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  TextField,
+  Button
+} from '@mui/material'
+import SwapApi from './api'
 
-function SendFunds({ username, onSubmit, onCancel }) {
-  const [formData, setFormData] = useState({
+function SendFunds({ username, setActivePanel, getUser, showToast, onCancel }) {
+
+  const {
+    control,
+    handleSubmit
+  } = useForm({
     usernameReceiving: "",
-    amount: ""
+    amount: "",
   });
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  const onSubmit = async (data) => {
+    const result = await SwapApi.sendFunds(username, data);
+    setActivePanel(null);
+    if (result.success) {
+      await getUser();
+      showToast("Funds successfully sent!");
+    } else {
+      showToast(result.error);
+    }
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    await onSubmit(username, formData);
-  }
-
   return (
-    <>
-      <h2>Send Funds</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="usernameReceiving">Recipient Username: </label>
-          <input
-            type="text"
-            id="usernameReceiving"
+    <Card>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div" sx={{ display: "flex", justifyContent: "flex-start" }}>
+            Send Funds
+          </Typography>
+          <Controller
             name="usernameReceiving"
-            value={formData.usernameReceiving}
+            control={control}
             placeholder="username"
-            onChange={handleChange}
+            render={({field, fieldState}) => (
+              <TextField
+                fullWidth
+                sx={{ mt: 2, mb: 1 }}
+                size="small"
+                id="usernameReceiving"
+                label="Recipient username"
+                variant="outlined"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                {...field}
+              />
+            )}
+            rules={{
+              required: "A recipient username is required",
+              maxLength: {
+                value: 20,
+                message: "Usernames cannot be more than 20 characters"
+              }
+            }}
           />
-        </div>
-        <div>
-          <label htmlFor="amount">Amount $: </label>
-          <input
-            type="text"
-            id="amount"
+          <Controller
             name="amount"
-            value={formData.amount}
+            control={control}
             placeholder="0.00"
-            onChange={handleChange}
+            render={({field, fieldState}) => (
+              <TextField
+                fullWidth
+                sx={{ mt: 2, mb: 1 }}
+                size="small"
+                id="amount"
+                label="Amount $"
+                variant="outlined"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                {...field}
+              />
+            )}
+            rules={{
+              required: "An amount is required",
+              pattern: {
+                value: /^(\d+(\.\d{1,2})?|\.\d{1,2})$/,
+                message: "Amounts must follow a format like 10 or 10.00"
+              }
+            }}
           />
-        </div>
-        <button type="submit">Send Funds</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
+        </CardContent>
+        <CardActions sx={{ mr: 1, justifyContent: "flex-end" }}>
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{ mt: 2, mb: 1 }}
+          >
+            Send Funds
+          </Button>
+          <Button
+            variant="contained"
+            type="button"
+            sx={{ mt: 2, mb: 1 }}
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        </CardActions>
       </form>
-    </>
+    </Card>
   )
 }
 

@@ -1,69 +1,139 @@
-import { useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { 
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  TextField,
+  MenuItem,
+  Button
+} from '@mui/material';
+import SwapApi from './api'
 
-function BuySell({ username, onSubmit, onCancel }) {
-  const [formData, setFormData] = useState({
+function BuySell({ username, setActivePanel, getUser, showToast, onCancel }) {
+
+  const {
+    control,
+    handleSubmit
+  } = useForm({
     symbol: "",
     orderType: "",
-    amount: ""
+    amount: "",
   });
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  }
-
-  const handleSubmit = async e => {
-    e.preventDefault();
-    await onSubmit(username, formData);
-  }
+  const onSubmit = async (data) => {
+    const result = await SwapApi.marketTransaction(username, data);
+    setActivePanel(null);
+    if (result.success) {
+      await getUser()
+      showToast("Market transaction successful!")
+    } else {
+      showToast(result.error);
+    }
+  };
 
   return (
-    <>
-      <h2>Market Transaction</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="symbol">Symbol: </label>
-          <input
-            type="text"
-            id="symbol"
+    <Card>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div" sx={{ display: "flex", justifyContent: "flex-start" }}>
+            Market Transaction
+          </Typography>
+          <Controller
             name="symbol"
-            value={formData.symbol}
-            placeholder="eg. AAPL or BTCUSD"
-            onChange={handleChange}
+            control={control}
+            placeholder="symbol"
+            render={({field, fieldState}) => (
+              <TextField
+                fullWidth
+                sx={{ mt: 2, mb: 1 }}
+                size="small"
+                id="symbol"
+                label="Symbol"
+                variant="outlined"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                {...field}
+              />
+            )}
+            rules={{
+              required: "A symbol is required",
+              maxLength: {
+                value: 10,
+                message: "Symbols cannot be more than 10 characters"
+              }
+            }}
           />
-        </div>
-        <div>
-          <label htmlFor="orderType">Order type: </label>
-          <select
-            id="orderType"
+          <Controller
             name="orderType"
-            value={formData.orderType}
-            onChange={handleChange}
+            control={control}
+            placeholder="order type"
+            render={({field, fieldState}) => (
+              <TextField
+                select
+                fullWidth
+                sx={{ mt: 2, mb: 1 }}
+                size="small"
+                id="order-type"
+                label="Order Type"
+                variant="outlined"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                {...field}
+              >
+                <MenuItem value="buy">Buy</MenuItem>
+                <MenuItem value="sell">Sell</MenuItem>
+              </TextField>
+            )}
+            rules={{ required: "An order type is required" }}
           >
-            <option value="">Select an order type</option>
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="amount">Amount: </label>
-          <input
-            type="text"
-            id="amount"
+          </Controller>
+          <Controller
             name="amount"
-            value={formData.amount}
-            placeholder="eg. 1000 or 0.003"
-            onChange={handleChange}
+            control={control}
+            placeholder="amount"
+            render={({field, fieldState}) => (
+              <TextField
+                fullWidth
+                sx={{ mt: 2, mb: 1 }}
+                size="small"
+                id="amount"
+                label="Amount"
+                variant="outlined"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                {...field}
+              />
+            )}
+            rules={{
+              required: "An amount is required",
+              pattern: {
+                value: /^(\d+(\.\d+)?|\.\d+)$/,
+                message: "Amounts must follow a format like 100 or 0.005"
+              }
+            }}
           />
-        </div>
-        <button type="submit">Submit</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
+        </CardContent>
+        <CardActions sx={{ mr: 1, justifyContent: "flex-end" }}>
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{ mt: 2, mb: 1 }}
+          >
+            Submit
+          </Button>
+          <Button
+            variant="contained"
+            type="button"
+            sx={{ mt: 2, mb: 1 }}
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        </CardActions>
       </form>
-    </>
-  );
+    </Card>
+  )
 }
 
 export default BuySell;
