@@ -3,7 +3,7 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Sat, 17 May 2025 22:50:12 GMT*
+*Updated: Mon, 19 May 2025 23:34:02 GMT*
 
 ## Swap
 
@@ -28,26 +28,26 @@ This document outlines current and planned milestones for the Swap project.
     - Render for client, server
     - Supabase for db
 - Client-side validation with React Hook Form, server-side validation with jsonschema
-    - now implemented for Login/Register forms (client) and routes (server)
+    - implemented for Login/Register forms (client) and routes (server)
+    - implemented for SendFunds and BuySell in user account page
 - UI
     - initial MUI TextField and Button components for Login/Register and welcome page
 
 ### To Do
 
-#### Form validation
-- Client side validation, server side validation with JSON schema
-    - Implement in user account page
-
 #### Home page, User account UI
-- Improve styling with CSS, MUI
-- Chart for asset types owned (initially only one)
 - Display additional info from db, like transaction history
+- Improve User account page styling
+  - Chart for asset types owned (initially only one)
 
 #### Additional testing
 - Fix broken tests, add more test coverage
 
 #### Additional views
 - User edit, delete information
+
+#### Server-side validation
+- Validate data from MarketApi service with json schema
 
 #### Automate with CI
 - Create a basic CI workflow and automate with GitHub Actions
