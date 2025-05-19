@@ -2,6 +2,9 @@
 
 const express = require("express");
 const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
+const { validateSchema } = require("../middleware/valid");
+const sendFundsSchema  = require("../schemas/sendFundsSchema.json")
+const marketTransSchema = require("../schemas/marketTransSchema.json")
 const User = require("../models/user");
 
 const router = express.Router();
@@ -37,7 +40,11 @@ router.post("/:username/fund-account", ensureCorrectUser, async (req, res, next)
 });
 
 /** User model check 4: send funds */
-router.post("/:username/send-funds", ensureCorrectUser, async (req, res, next) => {
+router.post(
+  "/:username/send-funds",
+  ensureCorrectUser,
+  validateSchema(sendFundsSchema),
+  async (req, res, next) => {
   try {
     const sendFundsDetails = {
       usernameSending: req.params.username,
@@ -52,7 +59,11 @@ router.post("/:username/send-funds", ensureCorrectUser, async (req, res, next) =
 });
 
 /** User model check 5: market transaction */
-router.post("/:username/market-transaction", ensureCorrectUser, async (req, res, next) => {
+router.post(
+  "/:username/market-transaction",
+  ensureCorrectUser,
+  validateSchema(marketTransSchema),
+  async (req, res, next) => {
   try {
     const marketTransactionDetails = {
       username: req.params.username,
