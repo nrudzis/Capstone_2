@@ -85,10 +85,96 @@ describe("MarketApi service tests", () => {
     }
   };
 
+  const PREV_ENV = process.env;
+
   beforeEach(() => {
+    jest.resetModules();
+    process.env = { ...PREV_ENV };
+    process.env.ALPACA_KEY = "test-key";
+    process.env.ALPACA_SECRET = "test-secret";
     axios.mockClear();
   });
 
+  afterEach(() => {
+    process.env = PREV_ENV;
+  });
+
+
+  // --- request ---
+
+  test("request: makes GET request with headers and uses 1 when no baseUrlNum is passed", async () => {
+    axios.mockResolvedValue({ data: "the data" });
+
+    const result = await MarketApi.request("test-endpoint", { foo: "bar" }); // don't pass baseUrlNum
+
+    expect(axios).toHaveBeenCalledWith(expect.objectContaining({
+      url: expect.stringContaining("https://data.alpaca.markets/test-endpoint"),
+      method: "GET",
+      headers: expect.objectContaining({
+        accept: "application/json",
+        "APCA-API-KEY-ID": "test-key",
+        "APCA-API-SECRET-KEY": "test-secret"
+      }),
+      params: { foo: "bar" }
+    }));
+    expect(result).toEqual({ data: "the data" });
+  });
+
+  test("request: uses 2 when baseUrlNum of 2 is passed", async () => {
+    axios.mockResolvedValue({ data: "the data 2" });
+
+    const result = await MarketApi.request("test-endpoint2", {}, 2); // pass baseUrlNum of 2
+
+    expect(axios).toHaveBeenCalledWith(expect.objectContaining({
+      url: expect.stringContaining("https://paper-api.alpaca.markets/test-endpoint2")
+    }));
+    expect(result).toEqual({ data: "the data 2" });
+  });
+
+  test("request: logs and throws error with status and message", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    const mockError = { response: { status: 500, data: { message: "Internal Server Error" }}, message: "Request failed" };
+
+    axios.mockRejectedValue(mockError);
+
+    await expect(MarketApi.request("failing-request-endpoint")).rejects.toThrow(
+      "Request to failing-request-endpoint failed with status 500: Internal Server Error"
+    );
+    expect(consoleSpy).toHaveBeenCalledWith("API Error:", { status: 500, message: "Internal Server Error" });
+
+    consoleSpy.mockRestore();
+  });
+
+
+  // --- sendOrder ---
+
+  test("sendOrder, stock case: returns all info needed for successful order", async () => {
+    axios.mockResolvedValueOnce(mockStockAssetInfoResponse);
+    axios.mockResolvedValueOnce(mockStockPriceResponse);
+
+    const sendOrderResult = await MarketApi.sendOrder("AAPL");
+
+    expect(sendOrderResult.symbol).toBe("AAPL");
+    expect(sendOrderResult.name).toBe("Apple Inc. Common Stock");
+    expect(sendOrderResult.unitPrice).toBeGreaterThanOrEqual(235.32);
+    expect(sendOrderResult.unitPrice).toBeLessThanOrEqual(235.37);
+  });
+
+  test("sendOrder, crypto case: returns all info needed for successful order", async () => {
+    axios.mockResolvedValueOnce(mockCryptoAssetInfoResponse);
+    axios.mockResolvedValueOnce(mockCryptoPriceResponse);
+
+    const sendOrderResult = await MarketApi.sendOrder("BTCUSD");
+
+    expect(sendOrderResult.symbol).toBe("BTCUSD");
+    expect(sendOrderResult.name).toBe("Bitcoin  / US Dollar");
+    expect(sendOrderResult.unitPrice).toBeGreaterThanOrEqual(90309.2);
+    expect(sendOrderResult.unitPrice).toBeLessThanOrEqual(90448.5);
+  });
+
+
+  // --- getAssetInfo ---
 
   test("getAssetInfo, stock case: returns required info for a stock", async () => {
     axios.mockResolvedValue(mockStockAssetInfoResponse);
@@ -114,6 +200,19 @@ describe("MarketApi service tests", () => {
     });
   });
 
+
+  // --- generatePrice ---
+  
+  test("generatePrice: returns a price between bidPrice and askPrice", async () => {
+    const fillPrice = MarketApi.generatePrice(90448.5, 90309.2);
+
+    expect(fillPrice).toBeGreaterThanOrEqual(90309.2);
+    expect(fillPrice).toBeLessThanOrEqual(90448.5);
+  });
+
+
+  // --- getStockPrice ---
+
   test("getStockPrice: returns stock price", async () => {
     axios.mockResolvedValue(mockStockPriceResponse);
 
@@ -123,6 +222,9 @@ describe("MarketApi service tests", () => {
     expect(stockPriceResult).toBeLessThanOrEqual(235.37);
   });
 
+
+  // --- getCryptoPrice ---
+
   test("getCryptoPrice: returns cryptocurrency price", async () => {
     axios.mockResolvedValue(mockCryptoPriceResponse);
 
@@ -131,29 +233,4 @@ describe("MarketApi service tests", () => {
     expect(cryptoPriceResult).toBeGreaterThanOrEqual(90309.2);
     expect(cryptoPriceResult).toBeLessThanOrEqual(90448.5);
   });
-
-  test("sendOrder, stock case: returns all info needed for successful order", async () => {
-    axios.mockResolvedValueOnce(mockStockAssetInfoResponse);
-    axios.mockResolvedValueOnce(mockStockPriceResponse);
-
-    const sendOrderResult = await MarketApi.sendOrder("AAPL");
-
-    expect(sendOrderResult.symbol).toBe("AAPL");
-    expect(sendOrderResult.name).toBe("Apple Inc. Common Stock");
-    expect(sendOrderResult.unitPrice).toBeGreaterThanOrEqual(235.32);
-    expect(sendOrderResult.unitPrice).toBeLessThanOrEqual(235.37);
-  });
-
-  test("sendOrder, crypto case: returns all info needed for successful order", async () => {
-    axios.mockResolvedValueOnce(mockCryptoAssetInfoResponse);
-    axios.mockResolvedValueOnce(mockCryptoPriceResponse);
-
-    const sendOrderResult = await MarketApi.sendOrder("BTCUSD");
-
-    expect(sendOrderResult.symbol).toBe("BTC/USD");
-    expect(sendOrderResult.name).toBe("Bitcoin  / US Dollar");
-    expect(sendOrderResult.unitPrice).toBeGreaterThanOrEqual(90309.2);
-    expect(sendOrderResult.unitPrice).toBeLessThanOrEqual(90448.5);
-  });
-
 });
