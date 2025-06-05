@@ -7,6 +7,13 @@ const { API_BASE_URL_2 } = require("../config.js");
 
 class MarketApi {
 
+  /** Build request object and send GET request.
+   *
+   * Returns response object.
+   *
+   * Logs and throws error with status and message.
+   */
+
   static async request(endpoint, data = {}, baseUrlNum = 1) {
     const baseUrl = (() => {
       if (baseUrlNum === 1) return API_BASE_URL_1;
@@ -36,12 +43,10 @@ class MarketApi {
     }
   }
 
-/** What it does.
+  /** Given an asset symbol, returns asset info and price.
    *
-   * Returns <returned-format>.
-   *
-   * Errors?
-   **/
+   * Returns { symbol, assetClass, name, unitPrice }.
+   */
 
   static async sendOrder(symbol) {
     const assetInfo = await this.getAssetInfo(symbol);
@@ -61,12 +66,10 @@ class MarketApi {
     };
   }
 
-/** What it does.
+  /** Given an asset symbol, returns asset info.
    *
-   * Returns <returned-format>.
-   *
-   * Errors?
-   **/
+   * Returns { assetClass, symbol, name }.
+   */
 
   static async getAssetInfo(symbol) {
     const { data } = await this.request(`v2/assets/${symbol}`, undefined, 2);
@@ -77,23 +80,15 @@ class MarketApi {
     };
   }
 
-/** What it does.
-   *
-   * Returns <returned-format>.
-   *
-   * Errors?
-   **/
+  /** Given an ask price and a bid price, returns a random fill price.
+   */
 
   static generatePrice(askPrice, bidPrice) {
     return Math.random() * (askPrice - bidPrice) + bidPrice;
   }
 
-  /** What it does.
-   *
-   * Returns <returned-format>.
-   *
-   * Errors?
-   **/
+  /** Given a stock symbol, returns a fill price based on latest ask price and bid price.
+   */
 
   static async getStockPrice(symbol) {
     const { data } = await this.request(`v2/stocks/${symbol}/quotes/latest`);
@@ -102,12 +97,8 @@ class MarketApi {
     return this.generatePrice(latestAskPrice, latestBidPrice);
   }
 
-/** What it does.
-   *
-   * Returns <returned-format>.
-   *
-   * Errors?
-   **/
+  /** Given a crypto symbol, returns a fill price based on latest ask price and bid price.
+   */
 
   static async getCryptoPrice(symbol) {
     const params = {
