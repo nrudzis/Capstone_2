@@ -22,7 +22,10 @@ const MarketApi = require("../services/marketApi.js");
 
 describe("authenticate", () => {
   test("works", async () => {
-    const user = await User.authenticate("u1", "password1");
+    const user = await User.authenticate({
+      username: "u1",
+      password: "password1"
+    });
     expect(user).toEqual({
       username: "u1",
     });
@@ -30,7 +33,10 @@ describe("authenticate", () => {
 
   test("unauth if no such user", async () => {
     try {
-      await User.authenticate("nope", "password");
+      await User.authenticate({
+        username: "nope",
+        password: "password"
+      });
       fail();
     } catch (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
@@ -39,7 +45,10 @@ describe("authenticate", () => {
 
   test("unauth if wrong password", async () => {
     try {
-    await User.authenticate("u1", "wrong");
+    await User.authenticate({
+      username: "u1",
+      password: "wrong"
+    });
     fail();
     } catch (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
@@ -104,6 +113,7 @@ describe("get", () => {
     expect(user).toEqual({
       username: "u1",
       accountBalance: "100000.00",
+      assets: []
     });
   });
 
@@ -266,6 +276,8 @@ describe("marketBuy", () => {
   });
 });
 
+/************************************** marketSell */
+
 describe("marketSell", () => {
   test("works", async () => {
     MarketApi.sendOrder.mockResolvedValue({
@@ -323,6 +335,7 @@ describe("marketSell", () => {
   });
 });
 
+/************************************** marketTransaction */
 
 describe("marketTransaction", () => {
   test("works", async () => {
