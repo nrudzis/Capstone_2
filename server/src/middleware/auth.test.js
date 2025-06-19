@@ -9,6 +9,7 @@ const { SECRET_KEY } = require("../config.js");
 const correctJwt = jwt.sign({ username: "testuser" }, SECRET_KEY);
 const wrongJwt = jwt.sign({ username: "testuser" }, "wrong");
 
+/************************************** authenticatJWT */
 describe("authenticateJWT", function () {
   test("works: token in header", function () {
     expect.assertions(2);
@@ -49,6 +50,7 @@ describe("authenticateJWT", function () {
   });
 });
 
+/************************************** ensureLoggedIn */
 describe("ensureLoggedIn", function () {
   test("works", function () {
     expect.assertions(1);
@@ -71,6 +73,7 @@ describe("ensureLoggedIn", function () {
   });
 });
 
+/************************************** ensureCorrectUser */
 describe("ensureCorrectUser", function () {
   test("works", function () {
     expect.assertions(1);
