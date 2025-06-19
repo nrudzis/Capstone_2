@@ -24,7 +24,25 @@ async function commonBeforeAll() {
   await db.query(`
     INSERT INTO balances(balance, username)
     VALUES (100000, 'u1'),
-           (200000, 'u2')`);
+           (200000, 'u2')`
+  );
+
+  await db.query(`
+    INSERT INTO assets(symbol, name, class)
+    VALUES ('AAPL', 'Apple Inc. Common Stock', 'us_equity')`
+  );
+
+  const { rows } = await db.query(`
+    SELECT id FROM assets WHERE symbol='AAPL'`
+  );
+
+  const assetId = rows[0];
+
+  await db.query(`
+    INSERT INTO users_assets(username, asset_id, asset_quantity)
+    VALUES ('u2', $1, 10)`,
+    [assetId.id],
+  );
 }
 
 async function commonBeforeEach() {

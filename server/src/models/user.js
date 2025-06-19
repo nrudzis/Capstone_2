@@ -18,7 +18,7 @@ class User {
    * Returns { username }.
    *
    * Throws UnauthorizedError if user not found or wrong password.
-   */
+   **/
 
   static async authenticate({ username, password }) {
     const result = await db.query(
@@ -95,9 +95,11 @@ class User {
     return rows;
   }
 
-  /** Given a username, return data about user.
+  /** Return data about user.
    *
-   * Returns { username, password }.
+   * Returns { username, accountBalance, assets: [ {asset1Info}, {asset2Info}, ... ] }.
+   *
+   * Throws NotFoundError if user not found.
    **/
 
   static async get(username) {
@@ -131,11 +133,23 @@ class User {
     return user[0];
   }
 
+  /** Commit a sql transaction.
+   *
+   * Helper method workaround to avoid unexpected behavior from nested transactions in testing.
+   **/
+
   static async commitTransaction() {
     return await db.query("COMMIT");
   }
 
-  /** Fund account.
+  /** Provide a user with a new balance.
+   *
+   * Deletes user's existing balance, if exists.
+   * Creates new $100000 balance.
+   * Returns { balanceId }.
+   *
+   * Throws NotFoundError if user not found.
+   * Throws BadRequestError if there is a problem with the transaction.
    **/
 
   static async fundAccount(username) {
@@ -146,7 +160,7 @@ class User {
       [username],
     );
 
-    if(!userCheck.rows[0]) throw NotFoundError(`No user: ${username}`);
+    if(!userCheck.rows[0]) throw new NotFoundError(`No user: ${username}`);
 
     try {
       await db.query("BEGIN");
@@ -181,12 +195,12 @@ class User {
     }
   }
 
-  /** Given a sending username, receiving username, and amount to send,
-   * deducts amount from sending user's balance and adds it to receiving
-   * user's balance.
+  /** Send funds from one user to another user.
    *
-   * Throws error if sending or receiving users don't exist/don't have
-   * accounts, sending user doesn't have sufficient funds.
+   * Returns { transactionId }.
+   *
+   * Throws NotFoundError if sending or receiving users don't exist/don't have balances.
+   * Throws BadRequestError if sending user doesn't have sufficient funds or if there is a problem with the transaction.
    **/
 
   static async sendFunds({ usernameSending, usernameReceiving, amount }) {
@@ -269,15 +283,12 @@ class User {
     }
   }
 
-  //orderType = 'BUY'
-  //  MarketApi.sendOrder(symbol)
-  //  -> { symbol, name, price }
-  //  -> if (balance < (price * amount) throw Error;
-  //  -> else
-  //       -> update BALANCES: balance = balance - (price * amount)
-  //       -> get asset id from ASSETS (create or get)
-  //       -> update MARKET_TRANSACTIONS
-  //       -> update USER_ASSETS
+  /** Buy an asset from the market for a user.
+   *
+   * Returns { transactionId, assetId }.
+   *
+   * Throws BadRequestError if user doesn't have sufficient funds or if there is a problem with the transaction.
+   **/
 
   static async marketBuy(username, buySymbol, buyQty) {
     const { symbol, assetClass, name, unitPrice } = await MarketApi.sendOrder(buySymbol);
@@ -400,15 +411,12 @@ class User {
   }
 
 
-  //orderType = 'SELL'
-  //  get ASSET id
-  //  -> if (!user_asset || amount > userAssetAmount) throw Error;
-  //  -> else
-  //       -> MarketApi.sendOrder(symbol)
-  //       -> { symbol, name, price }
-  //       -> update BALANCES: balance = balance + (price * amount)
-  //       -> update ASSET_TRANSACTIONS
-  //       -> update USER_ASSETS
+  /** Sell an asset from a user's holdings on the market.
+   *
+   * Returns { transactionId, assetId }.
+   *
+   * Throws BadRequestError if user doesn't have sufficient asset quantity or if there is a problem with the transaction.
+   **/
 
   static async marketSell(username, sellSymbol, sellQty) {
     const userAssetCheck = await db.query(
@@ -524,6 +532,10 @@ class User {
     }
   }
 
+  /** Market transaction handler.
+   *
+   * Returns appropriate method (marketBuy or marketSell) based on order type.
+   **/
   static async marketTransaction({ username, symbol, orderType, amount }) {
     if (orderType === "buy") {
       return this.marketBuy(username, symbol, amount);

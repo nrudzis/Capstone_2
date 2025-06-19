@@ -108,7 +108,7 @@ describe("getAll", () => {
 /************************************** get */
 
 describe("get", () => {
-  test("works", async () => {
+  test("works: has no assets case", async () => {
     const user = await User.get("u1");
     expect(user).toEqual({
       username: "u1",
@@ -117,9 +117,43 @@ describe("get", () => {
     });
   });
 
+  test("works: has assets case", async () => {
+    const user = await User.get("u2");
+    expect(user).toEqual({
+      username: "u2",
+      accountBalance: "200000.00",
+      assets: [{
+        assetQuantity: "10",
+        assetSymbol: "AAPL",
+        assetName: "Apple Inc. Common Stock",
+        assetClass: "us_equity"
+      }]
+    });
+  });
+
   test("not found if no such user", async () => {
     try {
       await User.get("nope");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** fundAccount */
+describe("fundAccount", () => {
+  test("works", async () => {
+    const { balanceId } = await User.fundAccount("u2");
+    expect(typeof balanceId).toBe("number");
+    const newFunds = await db.query(
+      `SELECT balance FROM balances WHERE username='u2'`);
+    expect(newFunds.rows[0].balance).toEqual("100000.00");
+  });
+
+  test("not found if no such user", async () => {
+    try {
+      await User.fundAccount("nope");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
