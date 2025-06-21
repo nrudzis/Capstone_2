@@ -3,7 +3,7 @@
 This document outlines current and planned milestones for the Swap project.
 - TODO: Add estimated times for completion (proximate milestones)
 
-*Updated: Mon, 19 May 2025 23:34:02 GMT*
+*Updated: Sat, 21 Jun 2025 01:29:41 GMT*
 
 ## Swap
 
@@ -32,6 +32,8 @@ This document outlines current and planned milestones for the Swap project.
     - implemented for SendFunds and BuySell in user account page
 - UI
     - initial MUI TextField and Button components for Login/Register and welcome page
+- Testing
+    - Fix broken tests, complete backend tests
 
 ### To Do
 
@@ -39,9 +41,6 @@ This document outlines current and planned milestones for the Swap project.
 - Display additional info from db, like transaction history
 - Improve User account page styling
   - Chart for asset types owned (initially only one)
-
-#### Additional testing
-- Fix broken tests, add more test coverage
 
 #### Additional views
 - User edit, delete information
